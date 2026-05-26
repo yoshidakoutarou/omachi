@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第48回 大町やまびこまつり｜踊り連 参加申込</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --gold: #c9a84c;
+        --gold-light: #e8d5a3;
+        --gold-dim: rgba(201, 168, 76, 0.35);
+        --navy: #07101e;
+        --navy-mid: #1a2a4a;
+        --cream: #f5f0e8;
+        --cream-dim: #c8c0b0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Noto Serif JP", "Yu Mincho", "YuMincho", serif;
+        background: var(--navy);
+        color: var(--cream);
+        overflow-x: hidden;
+      }
+
+      /* ─── HERO ─────────────────────────────────── */
+      .hero {
+        position: relative;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 120px 24px 140px;
+        overflow: hidden;
+      }
+
+      /* Night sky */
+      .sky {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 50% at 50% 0%,
+            #1e3d70 0%,
+            transparent 65%
+          ),
+          linear-gradient(
+            180deg,
+            #060c18 0%,
+            #0c1a30 40%,
+            #150d30 75%,
+            #07101e 100%
+          );
+      }
+
+      /* Stars */
+      .stars {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+      }
+      .star {
+        position: absolute;
+        border-radius: 50%;
+        background: #fff;
+        animation: twinkle var(--dur, 3s) var(--delay, 0s) infinite alternate
+          ease-in-out;
+      }
+      @keyframes twinkle {
+        from {
+          opacity: 0.2;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1.4);
+        }
+      }
+
+      /* Placeholder image strip — replace src with real photo */
+      .hero-img-wrap {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+      }
+      .hero-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.22;
+      }
+      /* Placeholder shown when no real image */
+      .hero-img-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: 1px dashed rgba(201, 168, 76, 0.22);
+        color: rgba(201, 168, 76, 0.35);
+        font-size: 0.72rem;
+        letter-spacing: 0.2em;
+      }
+      .hero-img-placeholder .icon {
+        font-size: 2.4rem;
+      }
+
+      /* Mountain SVG */
+      .mountains {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      /* Hero text */
+      .hero-body {
+        position: relative;
+        z-index: 4;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .hero-edition {
+        font-size: clamp(0.68rem, 1.8vw, 0.8rem);
+        letter-spacing: 0.45em;
+        color: var(--gold);
+        font-weight: 300;
+      }
+
+      .ornament {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: min(300px, 80vw);
+      }
+      .ornament::before,
+      .ornament::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--gold-dim),
+          transparent
+        );
+      }
+      .ornament-diamond {
+        width: 7px;
+        height: 7px;
+        background: var(--gold);
+        transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+      .ornament-triple {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+      }
+      .ornament-diamond.sm {
+        width: 4px;
+        height: 4px;
+      }
+
+      .hero-title {
+        font-size: clamp(2.4rem, 9vw, 5rem);
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        line-height: 1.25;
+        text-shadow:
+          0 4px 32px rgba(0, 0, 0, 0.9),
+          0 1px 4px rgba(0, 0, 0, 0.6);
+      }
+      .hero-title span {
+        display: block;
+        font-size: 0.55em;
+        letter-spacing: 0.5em;
+        color: var(--gold-light);
+        font-weight: 300;
+        margin-bottom: 6px;
+      }
+
+      .hero-subtitle {
+        font-size: clamp(0.75rem, 2vw, 0.9rem);
+        letter-spacing: 0.4em;
+        color: var(--cream-dim);
+        font-weight: 300;
+      }
+
+      .hero-date-box {
+        margin-top: 8px;
+        border: 1px solid var(--gold-dim);
+        padding: 14px 36px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+      }
+      .hero-date-main {
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        letter-spacing: 0.2em;
+        color: var(--gold-light);
+      }
+      .hero-date-sub {
+        font-size: clamp(0.7rem, 1.8vw, 0.78rem);
+        letter-spacing: 0.2em;
+        color: var(--cream-dim);
+        font-weight: 300;
+      }
+
+      .scroll-hint {
+        position: absolute;
+        bottom: 36px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 4;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: var(--gold-dim);
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        animation: fadeUpDown 2s infinite;
+      }
+      .scroll-hint::after {
+        content: "";
+        width: 1px;
+        height: 40px;
+        background: linear-gradient(to bottom, var(--gold-dim), transparent);
+      }
+      @keyframes fadeUpDown {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(6px);
+        }
+      }
+
+      /* ─── WRAPPER ───────────────────────────────── */
+      .wrapper {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ─── SECTION HEADER ────────────────────────── */
+      .sec-head {
+        text-align: center;
+        margin-bottom: 52px;
+      }
+      .sec-head h2 {
+        font-size: clamp(1rem, 3vw, 1.25rem);
+        letter-spacing: 0.5em;
+        font-weight: 400;
+      }
+      .sec-head .en {
+        display: block;
+        font-size: 0.62rem;
+        letter-spacing: 0.35em;
+        color: var(--gold);
+        margin-top: 10px;
+        font-weight: 300;
+      }
+
+      /* ─── ABOUT SECTION ────────────────────────── */
+      .about {
+        padding: 100px 0 80px;
+      }
+
+      .intro-text {
+        text-align: center;
+        line-height: 2.4;
+        font-size: clamp(0.88rem, 2.2vw, 0.98rem);
+        color: var(--cream-dim);
+        font-weight: 300;
+        letter-spacing: 0.06em;
+      }
+
+      /* Sub image placeholder */
+      .sub-img-wrap {
+        margin: 56px 0;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border: 1px solid var(--gold-dim);
+        position: relative;
+      }
+      .sub-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .sub-img-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: rgba(201, 168, 76, 0.04);
+        color: rgba(201, 168, 76, 0.4);
+        font-size: 0.7rem;
+        letter-spacing: 0.2em;
+      }
+      .sub-img-placeholder .icon {
+        font-size: 2rem;
+      }
+
+      /* Event details table */
+      .details {
+        border-top: 1px solid var(--gold-dim);
+        border-bottom: 1px solid var(--gold-dim);
+        padding: 36px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .detail-row {
+        display: flex;
+        gap: 28px;
+        align-items: flex-start;
+      }
+      .detail-label {
+        font-size: 0.7rem;
+        letter-spacing: 0.25em;
+        color: var(--gold);
+        min-width: 64px;
+        padding-top: 2px;
+        font-weight: 400;
+      }
+      .detail-value {
+        font-size: clamp(0.85rem, 2vw, 0.95rem);
+        color: var(--cream-dim);
+        font-weight: 300;
+        line-height: 1.9;
+        letter-spacing: 0.05em;
+      }
+
+      /* ─── FORM SECTION ─────────────────────────── */
+      .form-section {
+        padding: 80px 0 120px;
+      }
+
+      .gold-divider {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 64px;
+      }
+      .gold-divider::before,
+      .gold-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--gold-dim),
+          transparent
+        );
+      }
+      .gold-divider-inner {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      /* Glass card */
+      .form-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.05) 0%,
+          rgba(255, 255, 255, 0.02) 100%
+        );
+        border: 1px solid var(--gold-dim);
+        padding: 56px 48px;
+        position: relative;
+      }
+      /* Corner ornaments */
+      .form-card::before,
+      .form-card::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-color: var(--gold);
+        border-style: solid;
+      }
+      .form-card::before {
+        top: 12px;
+        left: 12px;
+        border-width: 1px 0 0 1px;
+      }
+      .form-card::after {
+        bottom: 12px;
+        right: 12px;
+        border-width: 0 1px 1px 0;
+      }
+
+      @media (max-width: 520px) {
+        .form-card {
+          padding: 36px 20px;
+        }
+      }
+
+      .form-field {
+        margin-bottom: 40px;
+      }
+      .form-field:last-child {
+        margin-bottom: 0;
+      }
+
+      .field-label {
+        display: block;
+        font-size: 0.7rem;
+        letter-spacing: 0.35em;
+        color: var(--gold);
+        margin-bottom: 14px;
+        font-weight: 400;
+      }
+      .field-label .req {
+        color: #d08080;
+        font-size: 0.65rem;
+        margin-left: 8px;
+        letter-spacing: 0.1em;
+      }
+
+      .text-input,
+      .textarea-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(201, 168, 76, 0.22);
+        padding: 13px 16px;
+        color: var(--cream);
+        font-family: inherit;
+        font-size: 1rem; /* 16px以上でiOSの自動ズームを防ぐ */
+        outline: none;
+        transition:
+          border-color 0.3s,
+          background 0.3s;
+        letter-spacing: 0.05em;
+      }
+      .text-input:focus,
+      .textarea-input:focus {
+        border-color: var(--gold);
+        background: rgba(201, 168, 76, 0.05);
+      }
+      .text-input::placeholder,
+      .textarea-input::placeholder {
+        color: rgba(255, 255, 255, 0.2);
+      }
+
+      .textarea-input {
+        height: 110px;
+        resize: vertical;
+      }
+
+      /* Radio buttons */
+      .radio-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .r-label {
+        cursor: pointer;
+        position: relative;
+      }
+      .r-label input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .r-btn {
+        display: block;
+        padding: 10px 24px;
+        border: 1px solid rgba(201, 168, 76, 0.3);
+        color: var(--cream-dim);
+        font-family: inherit;
+        font-size: 0.88rem;
+        letter-spacing: 0.12em;
+        transition: all 0.25s;
+      }
+      .r-label:hover .r-btn {
+        border-color: rgba(201, 168, 76, 0.65);
+        color: var(--cream);
+      }
+      .r-label input:checked + .r-btn {
+        background: rgba(201, 168, 76, 0.12);
+        border-color: var(--gold);
+        color: var(--gold-light);
+      }
+
+      /* Submit */
+      .submit-wrap {
+        margin-top: 48px;
+        text-align: center;
+      }
+
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 18px 24px;
+        background: transparent;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-family: inherit;
+        font-size: 0.82rem;
+        letter-spacing: 0.45em;
+        cursor: pointer;
+        transition: all 0.35s;
+        position: relative;
+        overflow: hidden;
+      }
+      .submit-btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--gold);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.35s ease;
+        z-index: 0;
+      }
+      .submit-btn:hover::before {
+        transform: scaleX(1);
+      }
+      .submit-btn:hover {
+        color: var(--navy);
+      }
+      .submit-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .submit-btn:disabled::before {
+        display: none;
+      }
+      .submit-btn span {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Message */
+      .msg-box {
+        margin-top: 32px;
+        padding: 28px;
+        text-align: center;
+        font-size: 0.9rem;
+        letter-spacing: 0.1em;
+        line-height: 2;
+      }
+      .msg-box.success {
+        border: 1px solid rgba(100, 200, 130, 0.4);
+        color: #90d4a0;
+      }
+      .msg-box.error {
+        border: 1px solid rgba(200, 100, 100, 0.4);
+        color: #d49090;
+      }
+
+      /* ─── MOBILE ────────────────────────────────── */
+      @media (max-width: 480px) {
+        .hero {
+          padding: 72px 20px 100px;
+        }
+        .hero-body {
+          gap: 12px;
+        }
+        .hero-title {
+          font-size: clamp(1.7rem, 8vw, 2.4rem);
+          letter-spacing: 0.08em;
+        }
+        .hero-title span {
+          letter-spacing: 0.3em;
+        }
+        .hero-subtitle {
+          font-size: 0.75rem;
+          letter-spacing: 0.22em;
+        }
+        .hero-date-box {
+          padding: 12px 18px;
+          width: 100%;
+          max-width: 320px;
+        }
+        .hero-date-main {
+          font-size: 0.9rem;
+          letter-spacing: 0.1em;
+        }
+        .hero-date-sub {
+          font-size: 0.68rem;
+          letter-spacing: 0.05em;
+        }
+        .about {
+          padding: 72px 0 60px;
+        }
+        .sec-head {
+          margin-bottom: 36px;
+        }
+        .form-section {
+          padding: 60px 0 80px;
+        }
+        .r-btn {
+          padding: 12px 20px; /* タップ領域を広げる */
+        }
+      }
+
+      /* ─── FOOTER ────────────────────────────────── */
+      footer {
+        text-align: center;
+        padding: 48px 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.2);
+        font-size: 0.65rem;
+        letter-spacing: 0.25em;
+        font-weight: 300;
+        line-height: 2.4;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── HERO ───────────────────────────────────── -->
+    <section class="hero">
+      <div class="sky"></div>
+      <div class="stars" id="starsEl"></div>
+
+      <!-- メイン画像エリア（実際の写真と差し替えてください） -->
+      <div class="hero-img-wrap">
+        <img src="2.jpg" alt="大町やまびこまつり" />
+      </div>
+
+      <!-- 北アルプスシルエット -->
+      <svg
+        class="mountains"
+        viewBox="0 0 1440 260"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <!-- 遠景の山々 -->
+        <path
+          d="M0,260 L60,180 L140,215 L240,140 L310,175 L400,105 L470,150 L560,90
+             L630,140 L720,70 L790,130 L870,100 L940,155 L1020,110 L1100,165
+             L1180,115 L1260,160 L1360,120 L1440,155 L1440,260 Z"
+          fill="rgba(24,42,78,0.7)"
+        />
+        <!-- 中景 -->
+        <path
+          d="M0,260 L80,210 L180,235 L300,175 L420,225 L520,185 L640,215
+             L760,165 L860,210 L960,170 L1060,215 L1160,175 L1280,215 L1440,180 L1440,260 Z"
+          fill="rgba(14,25,50,0.85)"
+        />
+        <!-- 前景 -->
+        <path
+          d="M0,260 L120,238 L260,250 L400,225 L560,248 L700,230 L840,250
+             L980,235 L1120,252 L1260,238 L1440,245 L1440,260 Z"
+          fill="#07101e"
+        />
+      </svg>
+
+      <!-- テキスト -->
+      <div class="hero-body">
+        <p class="hero-edition">第 四 十 八 回</p>
+
+        <div class="ornament">
+          <div class="ornament-triple">
+            <div class="ornament-diamond sm"></div>
+            <div class="ornament-diamond"></div>
+            <div class="ornament-diamond sm"></div>
+          </div>
+        </div>
+
+        <h1 class="hero-title">
+          <span>おおまち</span>
+          大町やまびこまつり
+        </h1>
+
+        <p class="hero-subtitle">踊 り 連 　参 加 申 込</p>
+
+        <div class="ornament">
+          <div class="ornament-triple">
+            <div class="ornament-diamond sm"></div>
+            <div class="ornament-diamond"></div>
+            <div class="ornament-diamond sm"></div>
+          </div>
+        </div>
+
+        <div class="hero-date-box">
+          <p class="hero-date-main">令和八年　八月一日（土）</p>
+          <p class="hero-date-sub">踊り 18:30〜　｜　長野県大町市 中央通り</p>
+        </div>
+      </div>
+
+      <div class="scroll-hint">SCROLL</div>
+    </section>
+
+    <!-- ── ABOUT ──────────────────────────────────── -->
+    <section class="about">
+      <div class="wrapper">
+        <div class="sec-head">
+          <h2>は じ め に</h2>
+          <span class="en">INFORMATION</span>
+        </div>
+
+        <p class="intro-text">
+          第48回 大町やまびこまつりへの<br />
+          踊り連としての参加にあたり、<br />
+          下記のアンケートにご回答ください。<br />
+          <br />
+          回答内容はTシャツの準備や<br />
+          当日の運営に使用します。
+        </p>
+
+        <!-- サブ画像エリア（踊りや会場の写真を配置） -->
+        <div class="sub-img-wrap">
+          <img src="1.jpg" alt="やまびこまつりの踊り" />
+        </div>
+
+        <div class="details">
+          <div class="detail-row">
+            <span class="detail-label">日　時</span>
+            <span class="detail-value">
+              令和8年 8月1日（土）<br />
+              歩行者天国 14:30〜21:30<br />
+              踊り 18:30〜
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">場　所</span>
+            <span class="detail-value">長野県大町市　中央通り</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">内　容</span>
+            <span class="detail-value">やまびこ音頭・やまびこサンバ</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">お問合せ</span>
+            <span class="detail-value"
+              >大町やまびこまつり実行委員会<br />TEL: 0261-22-0420</span
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FORM ───────────────────────────────────── -->
+    <section class="form-section">
+      <div class="wrapper">
+        <div class="gold-divider">
+          <div class="gold-divider-inner">
+            <div class="ornament-diamond sm"></div>
+            <div class="ornament-diamond"></div>
+            <div class="ornament-diamond sm"></div>
+          </div>
+        </div>
+
+        <div class="sec-head">
+          <h2>参 加 申 込</h2>
+          <span class="en">REGISTRATION</span>
+        </div>
+
+        <div class="form-card">
+          <form id="regForm">
+            <div class="form-field">
+              <label class="field-label" for="name"
+                >お 名 前<span class="req">必須</span></label
+              >
+              <input
+                class="text-input"
+                type="text"
+                id="name"
+                placeholder="山田 太郎"
+                required
+                autocomplete="name"
+              />
+            </div>
+
+            <div class="form-field">
+              <span class="field-label"
+                >参 加 可 否<span class="req">必須</span></span
+              >
+              <div class="radio-group">
+                <label class="r-label">
+                  <input type="radio" name="attendance" value="可能" required />
+                  <span class="r-btn">参加できる</span>
+                </label>
+                <label class="r-label">
+                  <input type="radio" name="attendance" value="不可能" />
+                  <span class="r-btn">参加できない</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label"
+                >T シ ャ ツ サ イ ズ<span class="req">必須</span></span
+              >
+              <div class="radio-group">
+                <label class="r-label"
+                  ><input
+                    type="radio"
+                    name="tshirtSize"
+                    value="S"
+                    required
+                  /><span class="r-btn">S</span></label
+                >
+                <label class="r-label"
+                  ><input type="radio" name="tshirtSize" value="M" /><span
+                    class="r-btn"
+                    >M</span
+                  ></label
+                >
+                <label class="r-label"
+                  ><input type="radio" name="tshirtSize" value="L" /><span
+                    class="r-btn"
+                    >L</span
+                  ></label
+                >
+                <label class="r-label"
+                  ><input type="radio" name="tshirtSize" value="XL" /><span
+                    class="r-btn"
+                    >XL</span
+                  ></label
+                >
+              </div>
+            </div>
+
+            <div class="form-field">
+              <span class="field-label"
+                >二 次 会 参 加 可 否<span class="req">必須</span></span
+              >
+              <div class="radio-group">
+                <label class="r-label">
+                  <input type="radio" name="party" value="可能" required />
+                  <span class="r-btn">参加できる</span>
+                </label>
+                <label class="r-label">
+                  <input type="radio" name="party" value="不可能" />
+                  <span class="r-btn">参加できない</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label" for="comment"
+                >そ の 他 ・ ご 質 問</label
+              >
+              <textarea
+                class="textarea-input"
+                id="comment"
+                placeholder="自由にご記入ください"
+              ></textarea>
+            </div>
+
+            <div class="submit-wrap">
+              <button class="submit-btn" type="submit" id="submitBtn">
+                <span>申 込 を 送 信 す る</span>
+              </button>
+            </div>
+          </form>
+
+          <div id="msgBox" class="msg-box" style="display: none"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ─────────────────────────────────── -->
+    <footer>
+      <p>第 四 十 八 回　大 町 や ま び こ ま つ り</p>
+      <p style="margin-top: 8px">
+        大町やまびこまつり実行委員会　TEL: 0261-22-0420
+      </p>
+    </footer>
+
+    <script>
+      /* ── Stars ── */
+      (function () {
+        const el = document.getElementById("starsEl");
+        for (let i = 0; i < 90; i++) {
+          const s = document.createElement("div");
+          s.className = "star";
+          const sz = Math.random() * 2 + 0.4;
+          s.style.cssText =
+            `width:${sz}px;height:${sz}px;` +
+            `left:${Math.random() * 100}%;` +
+            `top:${Math.random() * 70}%;` +
+            `--dur:${(2 + Math.random() * 3).toFixed(1)}s;` +
+            `--delay:${(Math.random() * 3).toFixed(1)}s;` +
+            `opacity:${(0.3 + Math.random() * 0.7).toFixed(2)};`;
+          el.appendChild(s);
+        }
+      })();
+
+      /* ── Form submit ── */
+      document
+        .getElementById("regForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const attendance = document.querySelector(
+            'input[name="attendance"]:checked',
+          );
+          const tshirtSize = document.querySelector(
+            'input[name="tshirtSize"]:checked',
+          );
+          const party = document.querySelector('input[name="party"]:checked');
+
+          if (!attendance || !tshirtSize || !party) {
+            showMsg("必須項目をすべてご選択ください。", "error");
+            return;
+          }
+
+          const data = {
+            name: document.getElementById("name").value.trim(),
+            attendance: attendance.value,
+            tshirtSize: tshirtSize.value,
+            party: party.value,
+            comment: document.getElementById("comment").value.trim(),
+          };
+
+          const btn = document.getElementById("submitBtn");
+          btn.disabled = true;
+          btn.querySelector("span").textContent = "送 信 中 …";
+
+          google.script.run
+            .withSuccessHandler(function () {
+              document.getElementById("regForm").style.display = "none";
+              showMsg(
+                "お申し込みを受け付けました。\nご参加ありがとうございます。",
+                "success",
+              );
+            })
+            .withFailureHandler(function () {
+              btn.disabled = false;
+              btn.querySelector("span").textContent = "申 込 を 送 信 す る";
+              showMsg(
+                "送信に失敗しました。お手数ですが、もう一度お試しください。",
+                "error",
+              );
+            })
+            .submitForm(data);
+        });
+
+      function showMsg(text, type) {
+        const el = document.getElementById("msgBox");
+        el.textContent = text;
+        el.className = "msg-box " + type;
+        el.style.display = "block";
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    </script>
+  </body>
+</html>
