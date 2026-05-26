@@ -1,0 +1,98 @@
+<script>
+  // ーーー（中略：フォームの動的制御などのJavaScriptはそのまま）ーーー
+
+  // フォーム送信イベント
+  document.getElementById("regForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    var attendance = document.querySelector('input[name="attendance"]:checked');
+    if (!attendance) {
+      showMsg("参加・不参加をご選択ください。", "error");
+      return;
+    }
+    var isAbsent = attendance.value === "不参加";
+
+    var tshirtNeeded = document.querySelector(
+      'input[name="tshirtNeeded"]:checked',
+    );
+    if (!isAbsent && !tshirtNeeded) {
+      showMsg("Tシャツの要否をご選択ください。", "error");
+      return;
+    }
+    var noShirt = tshirtNeeded && tshirtNeeded.value === "不要";
+
+    var tshirtSize = document.querySelector('input[name="tshirtSize"]:checked');
+    if (!isAbsent && !noShirt && !tshirtSize) {
+      showMsg("Tシャツのサイズをご選択ください。", "error");
+      return;
+    }
+
+    var party = document.querySelector('input[name="party"]:checked');
+    if (!party) {
+      showMsg("二次会参加可否をご選択ください。", "error");
+      return;
+    }
+
+    var data = {
+      name: document.getElementById("name").value.trim(),
+      attendance: attendance.value,
+      tshirtNeeded: isAbsent ? "" : tshirtNeeded.value,
+      tshirtSize: isAbsent || noShirt ? "" : tshirtSize.value,
+      party: party.value,
+      comment: document.getElementById("comment").value.trim(),
+    };
+
+    // --------------------------------------------------
+    // ★修正箇所：fetchを使ってGASのAPIにデータを送信する
+    // --------------------------------------------------
+
+    // 後ほどデプロイして発行されるGASの「WebアプリURL」をここに貼り付けます
+    var GAS_WEB_APP_URL =
+      "https://script.google.com/macros/s/AKfycbwwAXFI8ufRU3Zv3KvongYyvu0bMQ7HFjojIEgN367IVuylupXaCL4ynSAx4Prx68lCbg/exec";
+
+    var btn = document.getElementById("submitBtn");
+    btn.disabled = true;
+    btn.querySelector("span").textContent = "送 信 中 …";
+
+    fetch(GAS_WEB_APP_URL, {
+      method: "POST",
+      mode: "cors", // クロスドメイン通信を許可
+      headers: {
+        // GAS側でエラー（プリフライトエラー）を起こさないための定番の設定です
+        "Content-Type": "text/plain",
+      },
+      body: JSON.stringify(data),
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (result) {
+        if (result.status === "success") {
+          document.getElementById("regForm").style.display = "none";
+          showMsg(
+            "お申し込みを受け付けました。\nご参加ありがとうございます。",
+            "success",
+          );
+        } else {
+          throw new Error(result.message);
+        }
+      })
+      .catch(function (error) {
+        console.error("送信エラー:", error);
+        btn.disabled = false;
+        btn.querySelector("span").textContent = "申 込 を 送 信 す る";
+        showMsg(
+          "送信に失敗しました。お手数ですが、もう一度お試しください。",
+          "error",
+        );
+      });
+  });
+
+  function showMsg(text, type) {
+    var el = document.getElementById("msgBox");
+    el.textContent = text;
+    el.className = "msg-box " + type;
+    el.style.display = "block";
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+</script>
