@@ -1,98 +1,1198 @@
-<script>
-  // ーーー（中略：フォームの動的制御などのJavaScriptはそのまま）ーーー
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第48回 大町やまびこまつり｜踊り連 参加申込</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
 
-  // フォーム送信イベント
-  document.getElementById("regForm").addEventListener("submit", function (e) {
-    e.preventDefault();
+      /* GASバナーを非表示 */
+      #warning-bar-table,
+      #warning,
+      .warning-bar,
+      .warning-banner-bar {
+        display: none !important;
+      }
 
-    var attendance = document.querySelector('input[name="attendance"]:checked');
-    if (!attendance) {
-      showMsg("参加・不参加をご選択ください。", "error");
-      return;
-    }
-    var isAbsent = attendance.value === "不参加";
+      :root {
+        --gold: #d49610;
+        --gold-light: #f0c840;
+        --gold-dim: rgba(212, 150, 16, 0.4);
+        --bg: #0f0805;
+        --cream: #fdf5e4;
+        --cream-dim: #d4c8a0;
+      }
 
-    var tshirtNeeded = document.querySelector(
-      'input[name="tshirtNeeded"]:checked',
-    );
-    if (!isAbsent && !tshirtNeeded) {
-      showMsg("Tシャツの要否をご選択ください。", "error");
-      return;
-    }
-    var noShirt = tshirtNeeded && tshirtNeeded.value === "不要";
+      html {
+        scroll-behavior: smooth;
+      }
 
-    var tshirtSize = document.querySelector('input[name="tshirtSize"]:checked');
-    if (!isAbsent && !noShirt && !tshirtSize) {
-      showMsg("Tシャツのサイズをご選択ください。", "error");
-      return;
-    }
+      body {
+        font-family: "Noto Serif JP", "Yu Mincho", "YuMincho", serif;
+        background: var(--bg);
+        color: var(--cream);
+        overflow-x: hidden;
+      }
 
-    var party = document.querySelector('input[name="party"]:checked');
-    if (!party) {
-      showMsg("二次会参加可否をご選択ください。", "error");
-      return;
-    }
+      /* ─── HERO ─────────────────────────────────── */
+      .hero {
+        position: relative;
+        min-height: 100svh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 130px 24px 150px;
+        overflow: hidden;
+      }
 
-    var data = {
-      name: document.getElementById("name").value.trim(),
-      attendance: attendance.value,
-      tshirtNeeded: isAbsent ? "" : tshirtNeeded.value,
-      tshirtSize: isAbsent || noShirt ? "" : tshirtSize.value,
-      party: party.value,
-      comment: document.getElementById("comment").value.trim(),
-    };
-
-    // --------------------------------------------------
-    // ★修正箇所：fetchを使ってGASのAPIにデータを送信する
-    // --------------------------------------------------
-
-    // 後ほどデプロイして発行されるGASの「WebアプリURL」をここに貼り付けます
-    var GAS_WEB_APP_URL =
-      "https://script.google.com/macros/s/AKfycbwwAXFI8ufRU3Zv3KvongYyvu0bMQ7HFjojIEgN367IVuylupXaCL4ynSAx4Prx68lCbg/exec";
-
-    var btn = document.getElementById("submitBtn");
-    btn.disabled = true;
-    btn.querySelector("span").textContent = "送 信 中 …";
-
-    fetch(GAS_WEB_APP_URL, {
-      method: "POST",
-      mode: "cors", // クロスドメイン通信を許可
-      headers: {
-        // GAS側でエラー（プリフライトエラー）を起こさないための定番の設定です
-        "Content-Type": "text/plain",
-      },
-      body: JSON.stringify(data),
-    })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (result) {
-        if (result.status === "success") {
-          document.getElementById("regForm").style.display = "none";
-          showMsg(
-            "お申し込みを受け付けました。\nご参加ありがとうございます。",
-            "success",
+      /* 暖かい夏祭りの夜空 */
+      .sky {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 65% 45% at 50% 20%,
+            rgba(200, 75, 10, 0.6) 0%,
+            transparent 65%
+          ),
+          radial-gradient(
+            ellipse 30% 25% at 15% 5%,
+            rgba(220, 100, 10, 0.4) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse 30% 25% at 85% 5%,
+            rgba(220, 100, 10, 0.4) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse 20% 15% at 50% 0%,
+            rgba(240, 130, 20, 0.3) 0%,
+            transparent 40%
+          ),
+          linear-gradient(
+            180deg,
+            #080304 0%,
+            #160906 38%,
+            #1c0d07 62%,
+            #0f0805 100%
           );
-        } else {
-          throw new Error(result.message);
-        }
-      })
-      .catch(function (error) {
-        console.error("送信エラー:", error);
-        btn.disabled = false;
-        btn.querySelector("span").textContent = "申 込 を 送 信 す る";
-        showMsg(
-          "送信に失敗しました。お手数ですが、もう一度お試しください。",
-          "error",
-        );
-      });
-  });
+      }
 
-  function showMsg(text, type) {
-    var el = document.getElementById("msgBox");
-    el.textContent = text;
-    el.className = "msg-box " + type;
-    el.style.display = "block";
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-</script>
+      /* 火の粉 */
+      .sparks {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+      }
+      .spark {
+        position: absolute;
+        border-radius: 50%;
+        animation: flicker var(--dur, 2s) var(--delay, 0s) infinite alternate
+          ease-in-out;
+      }
+      @keyframes flicker {
+        from {
+          opacity: 0.15;
+          transform: scale(0.6);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1.6);
+        }
+      }
+
+      /* 祭りの写真 */
+      .hero-img-wrap {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+      }
+      .hero-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.3;
+      }
+
+      /* 山のシルエット */
+      .mountains {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 4;
+        pointer-events: none;
+      }
+
+      /* ヒーローテキスト */
+      .hero-body {
+        position: relative;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+      }
+
+      .hero-edition {
+        font-size: clamp(0.68rem, 1.8vw, 0.8rem);
+        letter-spacing: 0.45em;
+        color: var(--gold-light);
+        font-weight: 300;
+      }
+
+      .ornament {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: min(300px, 80vw);
+      }
+      .ornament::before,
+      .ornament::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--gold-dim),
+          transparent
+        );
+      }
+      .ornament-diamond {
+        width: 7px;
+        height: 7px;
+        background: var(--gold);
+        transform: rotate(45deg);
+        flex-shrink: 0;
+      }
+      .ornament-triple {
+        display: flex;
+        gap: 5px;
+        align-items: center;
+      }
+      .ornament-diamond.sm {
+        width: 4px;
+        height: 4px;
+      }
+
+      .hero-title {
+        font-size: clamp(2.4rem, 9vw, 5rem);
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        line-height: 1.25;
+        text-shadow:
+          0 0 40px rgba(255, 100, 10, 0.7),
+          0 2px 20px rgba(180, 50, 0, 0.6),
+          0 4px 40px rgba(0, 0, 0, 0.95),
+          0 1px 4px rgba(0, 0, 0, 0.8);
+      }
+      .hero-title span {
+        display: block;
+        font-size: 0.55em;
+        letter-spacing: 0.5em;
+        color: var(--gold-light);
+        font-weight: 300;
+        margin-bottom: 6px;
+      }
+
+      .hero-subtitle {
+        font-size: clamp(0.75rem, 2vw, 0.9rem);
+        letter-spacing: 0.4em;
+        color: var(--cream-dim);
+        font-weight: 300;
+      }
+
+      .hero-date-box {
+        margin-top: 8px;
+        border: 1px solid var(--gold-dim);
+        padding: 14px 36px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(6px);
+      }
+      .hero-date-main {
+        font-size: clamp(1rem, 3vw, 1.2rem);
+        letter-spacing: 0.2em;
+        color: var(--gold-light);
+      }
+      .hero-date-sub {
+        font-size: clamp(0.7rem, 1.8vw, 0.78rem);
+        letter-spacing: 0.2em;
+        color: var(--cream-dim);
+        font-weight: 300;
+      }
+
+      .scroll-hint {
+        position: absolute;
+        bottom: 36px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        color: rgba(212, 150, 16, 0.55);
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        animation: fadeUpDown 2s infinite;
+      }
+      .scroll-hint::after {
+        content: "";
+        width: 1px;
+        height: 40px;
+        background: linear-gradient(
+          to bottom,
+          rgba(212, 150, 16, 0.55),
+          transparent
+        );
+      }
+      @keyframes fadeUpDown {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(6px);
+        }
+      }
+
+      /* ─── WRAPPER ───────────────────────────────── */
+      .wrapper {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      /* ─── SECTION HEADER ────────────────────────── */
+      .sec-head {
+        text-align: center;
+        margin-bottom: 52px;
+      }
+      .sec-head h2 {
+        font-size: clamp(1.1rem, 3.5vw, 1.25rem);
+        letter-spacing: 0.5em;
+        font-weight: 400;
+      }
+      .sec-head .en {
+        display: block;
+        font-size: 0.78rem;
+        letter-spacing: 0.3em;
+        color: var(--gold);
+        margin-top: 10px;
+        font-weight: 300;
+      }
+      .sec-head .en::before,
+      .sec-head .en::after {
+        content: "—";
+        margin: 0 8px;
+        opacity: 0.5;
+      }
+
+      /* ─── ABOUT ────────────────────────────────── */
+      .about {
+        padding: 100px 0 80px;
+      }
+
+      .intro-text {
+        text-align: center;
+        line-height: 2.4;
+        font-size: clamp(0.96rem, 2.5vw, 1rem);
+        color: var(--cream-dim);
+        font-weight: 300;
+        letter-spacing: 0.06em;
+      }
+
+      .sub-img-wrap {
+        margin: 56px 0;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border: 1px solid var(--gold-dim);
+        position: relative;
+      }
+      .sub-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .details {
+        border-top: 1px solid var(--gold-dim);
+        border-bottom: 1px solid var(--gold-dim);
+        padding: 36px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .detail-row {
+        display: flex;
+        gap: 28px;
+        align-items: flex-start;
+      }
+      .detail-label {
+        font-size: 0.82rem;
+        letter-spacing: 0.2em;
+        color: var(--gold);
+        min-width: 64px;
+        padding-top: 2px;
+        font-weight: 400;
+      }
+      .detail-value {
+        font-size: clamp(0.95rem, 2.5vw, 1rem);
+        color: var(--cream-dim);
+        font-weight: 300;
+        line-height: 1.9;
+        letter-spacing: 0.05em;
+      }
+
+      /* ─── TSHIRT IMAGES ────────────────────────── */
+      .tshirt-section {
+        margin-bottom: 64px;
+      }
+      .tshirt-imgs {
+        display: flex;
+        gap: 24px;
+        align-items: flex-start;
+      }
+      .tshirt-img-wrap {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .tshirt-img-wrap img {
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--gold-dim);
+        display: block;
+      }
+      .tshirt-img-caption {
+        font-size: 0.72rem;
+        letter-spacing: 0.3em;
+        color: var(--gold);
+        font-weight: 300;
+      }
+      @media (max-width: 480px) {
+        .tshirt-imgs {
+          flex-direction: column;
+          gap: 32px;
+        }
+        .tshirt-img-wrap {
+          width: 100%;
+        }
+      }
+
+      /* ─── FORM ─────────────────────────────────── */
+      .form-section {
+        padding: 80px 0 120px;
+      }
+
+      .gold-divider {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        margin-bottom: 64px;
+      }
+      .gold-divider::before,
+      .gold-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          var(--gold-dim),
+          transparent
+        );
+      }
+      .gold-divider-inner {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .form-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 150, 50, 0.05) 0%,
+          rgba(200, 60, 10, 0.03) 100%
+        );
+        border: 1px solid var(--gold-dim);
+        padding: 56px 48px;
+        position: relative;
+      }
+      .form-card::before,
+      .form-card::after {
+        content: "";
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-color: var(--gold);
+        border-style: solid;
+      }
+      .form-card::before {
+        top: 12px;
+        left: 12px;
+        border-width: 1px 0 0 1px;
+      }
+      .form-card::after {
+        bottom: 12px;
+        right: 12px;
+        border-width: 0 1px 1px 0;
+      }
+
+      .form-field {
+        margin-bottom: 40px;
+      }
+      .form-field:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-field.is-disabled {
+        opacity: 0.28;
+        pointer-events: none;
+        user-select: none;
+        transition: opacity 0.3s;
+      }
+
+      .field-label {
+        display: block;
+        font-size: 0.82rem;
+        letter-spacing: 0.3em;
+        color: var(--gold);
+        margin-bottom: 14px;
+        font-weight: 400;
+      }
+      .field-label .req {
+        color: #e08860;
+        font-size: 0.75rem;
+        margin-left: 8px;
+        letter-spacing: 0.1em;
+      }
+
+      .field-hint {
+        display: block;
+        font-size: 0.75rem;
+        color: var(--cream-dim);
+        letter-spacing: 0.05em;
+        margin-top: -8px;
+        margin-bottom: 14px;
+        font-weight: 300;
+        opacity: 0.8;
+      }
+
+      .text-input,
+      .textarea-input {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(212, 150, 16, 0.25);
+        padding: 13px 16px;
+        color: var(--cream);
+        font-family: inherit;
+        font-size: 1rem;
+        outline: none;
+        transition:
+          border-color 0.3s,
+          background 0.3s;
+        letter-spacing: 0.05em;
+      }
+      .text-input:focus,
+      .textarea-input:focus {
+        border-color: var(--gold);
+        background: rgba(212, 150, 16, 0.05);
+      }
+      .text-input::placeholder,
+      .textarea-input::placeholder {
+        color: rgba(255, 255, 255, 0.2);
+      }
+      .textarea-input {
+        height: 110px;
+        resize: vertical;
+      }
+
+      .radio-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .r-label {
+        cursor: pointer;
+        position: relative;
+      }
+      .r-label input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .r-btn {
+        display: block;
+        padding: 10px 24px;
+        border: 1px solid rgba(212, 150, 16, 0.3);
+        color: var(--cream-dim);
+        font-family: inherit;
+        font-size: 0.96rem;
+        letter-spacing: 0.1em;
+        transition: all 0.25s;
+      }
+      .r-label:hover .r-btn {
+        border-color: rgba(212, 150, 16, 0.7);
+        color: var(--cream);
+      }
+      .r-label input:checked + .r-btn {
+        background: rgba(212, 150, 16, 0.13);
+        border-color: var(--gold);
+        color: var(--gold-light);
+      }
+
+      .submit-wrap {
+        margin-top: 48px;
+      }
+      .submit-btn {
+        display: block;
+        width: 100%;
+        padding: 18px 24px;
+        background: transparent;
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        font-family: inherit;
+        font-size: 0.82rem;
+        letter-spacing: 0.45em;
+        cursor: pointer;
+        transition: all 0.35s;
+        position: relative;
+        overflow: hidden;
+      }
+      .submit-btn::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--gold);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.35s ease;
+        z-index: 0;
+      }
+      .submit-btn:hover::before {
+        transform: scaleX(1);
+      }
+      .submit-btn:hover {
+        color: var(--bg);
+      }
+      .submit-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .submit-btn:disabled::before {
+        display: none;
+      }
+      .submit-btn span {
+        position: relative;
+        z-index: 1;
+      }
+
+      .msg-box {
+        margin-top: 32px;
+        padding: 28px;
+        text-align: center;
+        font-size: 0.9rem;
+        letter-spacing: 0.1em;
+        line-height: 2;
+      }
+      .msg-box.success {
+        border: 1px solid rgba(100, 200, 130, 0.4);
+        color: #90d4a0;
+      }
+      .msg-box.error {
+        border: 1px solid rgba(220, 130, 80, 0.4);
+        color: #e09878;
+      }
+
+      /* ─── MOBILE ────────────────────────────────── */
+      @media (max-width: 480px) {
+        .hero {
+          padding: 72px 20px 100px;
+        }
+        .hero-body {
+          gap: 12px;
+        }
+        .hero-edition {
+          font-size: 0.82rem;
+        }
+        .hero-title {
+          font-size: clamp(1.7rem, 8vw, 2.4rem);
+          letter-spacing: 0.08em;
+        }
+        .hero-title span {
+          letter-spacing: 0.3em;
+        }
+        .hero-subtitle {
+          font-size: 0.9rem;
+          letter-spacing: 0.22em;
+        }
+        .hero-date-box {
+          padding: 12px 18px;
+          width: 100%;
+          max-width: 320px;
+        }
+        .hero-date-main {
+          font-size: 1rem;
+          letter-spacing: 0.1em;
+        }
+        .hero-date-sub {
+          font-size: 0.82rem;
+          letter-spacing: 0.05em;
+        }
+        .about {
+          padding: 72px 0 60px;
+        }
+        .sec-head {
+          margin-bottom: 36px;
+        }
+        .form-section {
+          padding: 60px 0 80px;
+        }
+        .form-card {
+          padding: 36px 20px;
+        }
+        .r-btn {
+          padding: 12px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="hero">
+      <div class="sky"></div>
+      <div class="sparks" id="sparksEl"></div>
+
+      <div class="hero-img-wrap">
+        <img src="hero-bg.jpg" alt="お祭り背景" />
+      </div>
+
+      <!-- 山のシルエット（温かいトーン） -->
+      <svg
+        class="mountains"
+        viewBox="0 0 1440 260"
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path
+          d="M0,260 L60,180 L140,215 L240,140 L310,175 L400,105 L470,150 L560,90
+             L630,140 L720,70 L790,130 L870,100 L940,155 L1020,110 L1100,165
+             L1180,115 L1260,160 L1360,120 L1440,155 L1440,260 Z"
+          fill="rgba(55,18,8,0.75)"
+        />
+        <path
+          d="M0,260 L80,210 L180,235 L300,175 L420,225 L520,185 L640,215
+             L760,165 L860,210 L960,170 L1060,215 L1160,175 L1280,215 L1440,180 L1440,260 Z"
+          fill="rgba(28,9,4,0.9)"
+        />
+        <path
+          d="M0,260 L120,238 L260,250 L400,225 L560,248 L700,230 L840,250
+             L980,235 L1120,252 L1260,238 L1440,245 L1440,260 Z"
+          fill="#0f0805"
+        />
+      </svg>
+
+      <div class="hero-body">
+        <div class="hero-edition">第 四 十 八 回</div>
+        <div class="ornament">
+          <div class="ornament-triple">
+            <div class="ornament-diamond sm"></div>
+            <div class="ornament-diamond"></div>
+            <div class="ornament-diamond sm"></div>
+          </div>
+        </div>
+        <h1 class="hero-title">
+          <span>おおまち</span>
+          大町やまびこまつり
+        </h1>
+        <p class="hero-subtitle">踊 り 連 　参 加 申 込</p>
+
+        <div class="ornament">
+          <div class="ornament-triple">
+            <div class="ornament-diamond sm"></div>
+            <div class="ornament-diamond"></div>
+            <div class="ornament-diamond sm"></div>
+          </div>
+        </div>
+
+        <div class="hero-date-box">
+          <p class="hero-date-main">令和八年　八月一日（土）</p>
+          <p class="hero-date-sub">踊り 18:30〜　｜　長野県大町市 商店街</p>
+        </div>
+      </div>
+      <div class="scroll-hint">SCROLL</div>
+    </section>
+
+    <section class="about">
+      <div class="wrapper">
+        <div class="sec-head">
+          <h2>は じ め に</h2>
+          <span class="en">INFORMATION</span>
+        </div>
+
+        <p class="intro-text">
+          第48回 大町やまびこまつりへの<br />
+          踊り連としての参加にあたり、<br />
+          下記のアンケートにご回答ください。<br />
+          <br />
+          回答内容はTシャツの準備や<br />
+          当日の運営に使用します。
+        </p>
+
+        <div class="sub-img-wrap">
+          <img src="about-festival.jpg" alt="やまびこまつりの踊り" />
+        </div>
+
+        <div class="details">
+          <div class="detail-row">
+            <span class="detail-label">日　時</span>
+            <span class="detail-value">
+              令和8年 8月1日（土）<br />集合 18:00<br />
+              踊り 18:30〜
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">場　所</span>
+            <span class="detail-value">商店街</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">内　容</span>
+            <span class="detail-value">やまびこ音頭・やまびこサンバ</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tshirt-section">
+      <div class="wrapper">
+        <div class="sec-head">
+          <h2>踊り連専用 Tシャツ</h2>
+          <span class="en">ORIGINAL T-SHIRT</span>
+        </div>
+
+        <div class="tshirt-imgs">
+          <div class="tshirt-img-wrap">
+            <img src="tshirt-front.jpg" alt="Tシャツ前面" />
+            <span class="tshirt-img-caption">前面デザイン</span>
+          </div>
+          <div class="tshirt-img-wrap">
+            <img src="tshirt-back.jpg" alt="Tシャツ背面" />
+            <span class="tshirt-img-caption">背面デザイン</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section" id="form-section">
+      <div class="wrapper">
+        <div class="gold-divider">
+          <div class="gold-divider-inner">
+            <div class="ornament-diamond sm"></div>
+            <div class="ornament-diamond"></div>
+            <div class="ornament-diamond sm"></div>
+          </div>
+        </div>
+
+        <div class="sec-head">
+          <h2>参加申込</h2>
+          <span class="en">REGISTRATION FORM</span>
+        </div>
+
+        <div class="form-card">
+          <form id="regForm">
+            <div class="form-field">
+              <label class="field-label" for="name"
+                >お名前<span class="req">必須</span></label
+              >
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="text-input"
+                placeholder="例：山田 太郎"
+                required
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="field-label"
+                >お祭りへの参加可否<span class="req">必須</span></label
+              >
+              <div class="radio-group">
+                <label class="r-label">
+                  <input type="radio" name="attendance" value="参加" checked />
+                  <span class="r-btn">参加する</span>
+                </label>
+                <label class="r-label">
+                  <input type="radio" name="attendance" value="不参加" />
+                  <span class="r-btn">不参加</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-field" id="tshirtNeededField">
+              <label class="field-label"
+                >連Tシャツの要否<span class="req">必須</span></label
+              >
+              <div class="radio-group">
+                <label class="r-label">
+                  <input
+                    type="radio"
+                    name="tshirtNeeded"
+                    value="必要"
+                    checked
+                  />
+                  <span class="r-btn">必要</span>
+                </label>
+                <label class="r-label">
+                  <input type="radio" name="tshirtNeeded" value="不要" />
+                  <span class="r-btn">不要</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-field" id="tshirtSizeField">
+              <label class="field-label"
+                >Tシャツサイズ<span class="req">必須</span></label
+              >
+              <div class="radio-group">
+                <label class="r-label"
+                  ><input type="radio" name="tshirtSize" value="S" /><span
+                    class="r-btn"
+                    >S</span
+                  ></label
+                >
+                <label class="r-label"
+                  ><input
+                    type="radio"
+                    name="tshirtSize"
+                    value="M"
+                    checked
+                  /><span class="r-btn">M</span></label
+                >
+                <label class="r-label"
+                  ><input type="radio" name="tshirtSize" value="L" /><span
+                    class="r-btn"
+                    >L</span
+                  ></label
+                >
+                <label class="r-label"
+                  ><input type="radio" name="tshirtSize" value="XL" /><span
+                    class="r-btn"
+                    >XL</span
+                  ></label
+                >
+              </div>
+            </div>
+
+            <div class="form-field" id="partyField">
+              <label class="field-label"
+                >二次会への参加可否<span class="req">必須</span></label
+              >
+              <span class="field-hint">※二次会だけ参加もできます！</span>
+              <div class="radio-group">
+                <label class="r-label">
+                  <input type="radio" name="party" value="参加" />
+                  <span class="r-btn">参加する</span>
+                </label>
+                <label class="r-label">
+                  <input type="radio" name="party" value="不参加" checked />
+                  <span class="r-btn">不参加</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="form-field">
+              <label class="field-label" for="comment"
+                >その他・ご質問など</label
+              >
+              <textarea
+                id="comment"
+                name="comment"
+                class="textarea-input"
+                placeholder="ご質問や連絡事項があればご記入ください。"
+              ></textarea>
+            </div>
+
+            <div class="submit-wrap">
+              <button type="submit" id="submitBtn" class="submit-btn">
+                <span>申 込 を 送 信 す る</span>
+              </button>
+            </div>
+          </form>
+
+          <div id="msgBox" class="msg-box" style="display: none"></div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // 1. 火の粉の演出アニメーション
+      var sparksEl = document.getElementById("sparksEl");
+      if (sparksEl) {
+        for (var i = 0; i < 30; i++) {
+          var spark = document.createElement("div");
+          spark.className = "spark";
+          spark.style.left = Math.random() * 100 + "%";
+          spark.style.top = Math.random() * 100 + "%";
+          var size = Math.random() * 4 + 2 + "px";
+          spark.style.width = size;
+          spark.style.height = size;
+          spark.style.background =
+            "rgba(255, " +
+            Math.floor(Math.random() * 150 + 100) +
+            ", 50, " +
+            Math.random() +
+            ")";
+          spark.style.setProperty("--dur", Math.random() * 3 + 2 + "s");
+          spark.style.setProperty("--delay", Math.random() * 2 + "s");
+          sparksEl.appendChild(spark);
+        }
+      }
+
+      // 2. フォームの連動制御
+      var attendanceRadios = document.querySelectorAll(
+        'input[name="attendance"]',
+      );
+      var tshirtNeededRadios = document.querySelectorAll(
+        'input[name="tshirtNeeded"]',
+      );
+
+      function toggleFields() {
+        var attendance = document.querySelector(
+          'input[name="attendance"]:checked',
+        );
+        var isAbsent = attendance && attendance.value === "不参加";
+
+        var tshirtNeeded = document.querySelector(
+          'input[name="tshirtNeeded"]:checked',
+        );
+        var noShirt = tshirtNeeded && tshirtNeeded.value === "不要";
+
+        var tshirtNeededField = document.getElementById("tshirtNeededField");
+        var tshirtSizeField = document.getElementById("tshirtSizeField");
+
+        if (isAbsent) {
+          if (tshirtNeededField) tshirtNeededField.classList.add("is-disabled");
+          if (tshirtSizeField) tshirtSizeField.classList.add("is-disabled");
+        } else {
+          if (tshirtNeededField)
+            tshirtNeededField.classList.remove("is-disabled");
+          if (noShirt) {
+            if (tshirtSizeField) tshirtSizeField.classList.add("is-disabled");
+          } else {
+            if (tshirtSizeField)
+              tshirtSizeField.classList.remove("is-disabled");
+          }
+        }
+      }
+
+      attendanceRadios.forEach(function (radio) {
+        radio.addEventListener("change", toggleFields);
+      });
+      tshirtNeededRadios.forEach(function (radio) {
+        radio.addEventListener("change", toggleFields);
+      });
+      toggleFields();
+
+      // 3. フォーム送信イベント (fetchでGASへPOST)
+      document
+        .getElementById("regForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          var attendance = document.querySelector(
+            'input[name="attendance"]:checked',
+          );
+          if (!attendance) {
+            showMsg("参加・不参加をご選択ください。", "error");
+            return;
+          }
+          var isAbsent = attendance.value === "不参加";
+
+          var tshirtNeeded = document.querySelector(
+            'input[name="tshirtNeeded"]:checked',
+          );
+          if (!isAbsent && !tshirtNeeded) {
+            showMsg("Tシャツの要否をご選択ください。", "error");
+            return;
+          }
+          var noShirt = tshirtNeeded && tshirtNeeded.value === "不要";
+
+          var tshirtSize = document.querySelector(
+            'input[name="tshirtSize"]:checked',
+          );
+          if (!isAbsent && !noShirt && !tshirtSize) {
+            showMsg("Tシャツのサイズをご選択ください。", "error");
+            return;
+          }
+
+          var party = document.querySelector('input[name="party"]:checked');
+          if (!party) {
+            showMsg("二次会参加可否をご選択ください。", "error");
+            return;
+          }
+
+          var data = {
+            name: document.getElementById("name").value.trim(),
+            attendance: attendance.value,
+            tshirtNeeded: isAbsent ? "" : tshirtNeeded.value,
+            tshirtSize: isAbsent || noShirt ? "" : tshirtSize.value,
+            party: party.value,
+            comment: document.getElementById("comment").value.trim(),
+          };
+
+          var GAS_WEB_APP_URL =
+            "https://script.google.com/macros/s/AKfycbwwAXFI8ufRU3Zv3KvongYyvu0bMQ7HFjojIEgN367IVuylupXaCL4ynSAx4Prx68lCbg/exec";
+
+          var btn = document.getElementById("submitBtn");
+          btn.disabled = true;
+          btn.querySelector("span").textContent = "送 信 中 …";
+
+          fetch(GAS_WEB_APP_URL, {
+            method: "POST",
+            mode: "cors",
+            headers: {
+              "Content-Type": "text/plain",
+            },
+            body: JSON.stringify(data),
+          })
+            .then(function (response) {
+              return response.json();
+            })
+            .then(function (result) {
+              if (result.status === "success") {
+                document.getElementById("regForm").style.display = "none";
+                showMsg(
+                  "お申し込みを受け付けました。\nご参加ありがとうございます。",
+                  "success",
+                );
+              } else {
+                throw new Error(result.message);
+              }
+            })
+            .catch(function (error) {
+              console.error("送信エラー:", error);
+              btn.disabled = false;
+              btn.querySelector("span").textContent = "申 込 を 送 信 す る";
+              showMsg(
+                "送信に失敗しました。お手数ですが、もう一度お試しください。",
+                "error",
+              );
+            });
+        });
+
+      function showMsg(text, type) {
+        var el = document.getElementById("msgBox");
+        el.textContent = text;
+        el.className = "msg-box " + type;
+        el.style.display = "block";
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    </script>
+  </body>
+
+  <footer
+    style="
+      padding: 60px 0 80px;
+      border-top: 1px solid var(--gold-dim);
+      background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.4));
+    "
+  >
+    <div
+      class="wrapper"
+      style="
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 0 24px;
+        text-align: center;
+      "
+    >
+      <div
+        style="
+          display: flex;
+          flex-direction: column;
+          gap: 32px;
+          align-items: center;
+        "
+      >
+        <div style="width: 100%; max-width: 400px">
+          <h3
+            style="
+              font-size: 0.82rem;
+              letter-spacing: 0.3em;
+              color: var(--gold);
+              font-weight: 400;
+              margin-bottom: 12px;
+            "
+          >
+            運 営
+          </h3>
+          <p
+            style="
+              font-size: 0.95rem;
+              color: var(--cream-dim);
+              font-weight: 300;
+              letter-spacing: 0.1em;
+              line-height: 1.8;
+            "
+          >
+            内山菜々子 <span>/</span> 北澤葉子 <span>/</span> 宮澤里菜
+            <span>/</span> 工藤れんげ
+          </p>
+        </div>
+
+        <div style="width: 100%; max-width: 400px">
+          <h3
+            style="
+              font-size: 0.82rem;
+              letter-spacing: 0.3em;
+              color: var(--gold);
+              font-weight: 400;
+              margin-bottom: 12px;
+            "
+          >
+            二次会運営
+          </h3>
+          <p
+            style="
+              font-size: 0.95rem;
+              color: var(--cream-dim);
+              font-weight: 300;
+              letter-spacing: 0.1em;
+              line-height: 1.8;
+            "
+          >
+            中尾勇斗 <span>/</span> 岩本圭太
+          </p>
+        </div>
+      </div>
+    </div>
+  </footer>
+</html>
